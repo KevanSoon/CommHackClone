@@ -91,47 +91,47 @@ const Navbar = () => {
                 currentPath === item.href ||
                 (item.name === 'About' && currentPath === '/');
 
-              if (item.name === 'Search') {
-                return (
-                  <div
-                    key={item.name}
-                    ref={searchDropdownRef}
-                    className="relative group px-2 py-1 rounded-md flex-shrink-0 cursor-pointer"
-                    onMouseEnter={() => setSearchDropdownOpen(true)}
-                    onMouseLeave={() => setSearchDropdownOpen(false)}
-                  >
-                    <span
-                      className={`text-base font-medium transition-colors duration-200 flex items-center gap-1 ${
-                        searchDropdownOpen
-                          ? 'text-[#2a56c5]'
-                          : 'text-[#A0A4AD] group-hover:text-[#2a56c5]'
-                      }`}
-                    >
-                      {item.name}
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-200 ${
-                          searchDropdownOpen ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </span>
-                    <span
-                      className="absolute inset-0 rounded-md transition-opacity duration-200 opacity-0 group-hover:opacity-20"
-                      style={{ backgroundColor: '#2a56c5' }}
-                    ></span>
+              // if (item.name === 'Search') {
+              //   return (
+              //     <div
+              //       key={item.name}
+              //       ref={searchDropdownRef}
+              //       className="relative group px-2 py-1 rounded-md flex-shrink-0 cursor-pointer"
+              //       onMouseEnter={() => setSearchDropdownOpen(true)}
+              //       onMouseLeave={() => setSearchDropdownOpen(false)}
+              //     >
+              //       <span
+              //         className={`text-base font-medium transition-colors duration-200 flex items-center gap-1 ${
+              //           searchDropdownOpen
+              //             ? 'text-[#2a56c5]'
+              //             : 'text-[#A0A4AD] group-hover:text-[#2a56c5]'
+              //         }`}
+              //       >
+              //         {item.name}
+              //         <ChevronDown
+              //           className={`w-4 h-4 transition-transform duration-200 ${
+              //             searchDropdownOpen ? 'rotate-180' : ''
+              //           }`}
+              //         />
+              //       </span>
+              //       <span
+              //         className="absolute inset-0 rounded-md transition-opacity duration-200 opacity-0 group-hover:opacity-20"
+              //         style={{ backgroundColor: '#2a56c5' }}
+              //       ></span>
 
-                    <div
-                      className={`absolute top-full left-0 transition-all duration-300 ease-in-out origin-top-left z-50 ${
-                        searchDropdownOpen
-                          ? 'visible opacity-100 scale-y-100'
-                          : 'invisible opacity-0 scale-y-0'
-                      }`}
-                      style={{ paddingTop: '1.5rem', marginBottom: '-1.5rem' }}
-                    >
-                      <SearchDropdown onClose={() => setSearchDropdownOpen(false)} />
-                    </div>
-                  </div>
-                );
-              }
+              //       <div
+              //         className={`absolute top-full left-0 transition-all duration-300 ease-in-out origin-top-left z-50 ${
+              //           searchDropdownOpen
+              //             ? 'visible opacity-100 scale-y-100'
+              //             : 'invisible opacity-0 scale-y-0'
+              //         }`}
+              //         style={{ paddingTop: '1.5rem', marginBottom: '-1.5rem' }}
+              //       >
+              //         <SearchDropdown onClose={() => setSearchDropdownOpen(false)} />
+              //       </div>
+              //     </div>
+              //   );
+              // }
 
               if (item.href) {
                 return (
