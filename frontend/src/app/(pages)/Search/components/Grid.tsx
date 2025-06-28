@@ -16,10 +16,10 @@ const gridItems: GridItem[] = [
   {
     id: 1,
     image: '/garden/tengah/tengah.png',
-    name: 'Tengah',
-    location: 'West Region',
-    description: 'A vibrant garden focused on sustainable crops.',
-    href: '/Search/CommunityGardens/tengah',
+    name: 'Community Garden 1',
+    location: 'Blk 111A Plantation Acres',
+    description: 'Why is my garden so small?',
+    href: '/Search/Concern/TestConcern',
   },
 ];
 

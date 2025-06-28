@@ -69,8 +69,7 @@ const Navbar = () => {
 
   const navItems = [
     { name: 'About', href: '/' },
-    { name: 'Search', type: 'dropdown', href: '/Search' },
-    { name: 'Concerns', href: '/Concerns' },
+    { name: 'Search', href: '/Search' },
     { name: 'Report', href: '/Report' },
   ];
 
@@ -92,7 +91,7 @@ const Navbar = () => {
                 currentPath === item.href ||
                 (item.name === 'About' && currentPath === '/');
 
-              if (item.type === 'dropdown' && item.name === 'Search') {
+              if (item.name === 'Search') {
                 return (
                   <div
                     key={item.name}
