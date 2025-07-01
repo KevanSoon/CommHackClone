@@ -4,25 +4,25 @@ import { MdOutlineFileUpload } from "react-icons/md";
 import { GoPaperclip } from "react-icons/go";
 import Banner from './components/Banner';
 
+// Change 1: Update the interface. affectedGarden is now a single string.
 interface FormData {
   name: string;
   mobileNumber: string;
   concernTitle: string; 
-  affectedGarden: string[]; 
+  affectedGarden: string; // Was string[]
   description: string;
   acknowledgeSelection: boolean;
   attachedFile: File | null; 
 }
 
 const gardens = ["Plantation Grove", "Tengah Community Club", "Plantation Acres", "Garden Vale"];
-const priorities = ["Urgent", "Moderate", "Low"];
 
 export default function Form() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     mobileNumber: '',
     concernTitle: '',
-    affectedGarden: [],
+    affectedGarden: '', // Change 2: Initial state is now an empty string.
     description: '',
     acknowledgeSelection: false,
     attachedFile: null, 
@@ -30,14 +30,7 @@ export default function Form() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const toggleArrayItem = (arr: string[], item: string): string[] => {
-    if (arr.includes(item)) {
-      return arr.filter(i => i !== item);
-    } else {
-      return [...arr, item];
-    }
-  };
-
+  // This function can now handle the 'affectedGarden' field as well.
   const handleInputChange = <Field extends keyof FormData>(field: Field, value: FormData[Field]) => {
     setFormData(prev => ({
       ...prev,
@@ -45,12 +38,7 @@ export default function Form() {
     }));
   };
 
-  const handleCheckboxArrayChange = (field: 'affectedGarden', value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: toggleArrayItem(prev[field], value),
-    }));
-  };
+  // Change 3: The `toggleArrayItem` and `handleCheckboxArrayChange` functions are no longer needed and have been removed.
 
   const handleChooseFileClick = () => {
     fileInputRef.current?.click(); 
@@ -70,70 +58,51 @@ export default function Form() {
   };
 
  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    // 1. Prevent the default browser behavior of reloading the page
     event.preventDefault();
-    // 2. Create a FormData object directly from the form event.
-    // This automatically collects all the input fields with a 'name' attribute.
       const dataToSubmit = new FormData();
       dataToSubmit.append('name', formData.name);
       dataToSubmit.append('mobileNumber', formData.mobileNumber);
       dataToSubmit.append('concernTitle', formData.concernTitle);
       dataToSubmit.append('description', formData.description);
       
-      // For the array of gardens, you must append each one individually.
-      // Your backend will then use .getAll('affectedGarden') to receive it as an array.
-      formData.affectedGarden.forEach(garden => {
-        dataToSubmit.append('affectedGarden', garden);
-      });
+      // Since it's a single string now, you just append it directly.
+      dataToSubmit.append('affectedGarden', formData.affectedGarden);
 
-      // For the file, append it if it exists
       if (formData.attachedFile) {
-        // Your backend expects the file under the key 'photos'
         dataToSubmit.append('photos', formData.attachedFile);
       }
-
-       // Now, the rest of your logic can stay mostly the same, but using the new object
-  try {
-    const response = await fetch('/api/concerns', {
-      method: 'POST',
-      body: dataToSubmit, // Use the manually constructed FormData object
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      // The 400 Bad Request error is coming from here.
-      // Log the specific error message from the server for easier debugging.
-      console.error("Server Error:", result.message); 
-      throw new Error(result.message || 'Something went wrong');
-    }
-
-    console.log("Submission successful:", result);
-    alert("Concern submitted successfully!"); // Give user feedback
     
-    // Resetting the form now requires resetting your state
-    setFormData({
-      name: '',
-      mobileNumber: '',
-      concernTitle: '',
-      affectedGarden: [],
-      description: '',
-      acknowledgeSelection: false,
-      attachedFile: null,
-    });
-    // And reset the file input visually
-    if(fileInputRef.current) {
-        fileInputRef.current.value = '';
+    // The rest of your submit logic remains the same
+    try {
+        const response = await fetch('/api/concerns', {
+            method: 'POST',
+            body: dataToSubmit,
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            console.error("Server Error:", result.message); 
+            throw new Error(result.message || 'Something went wrong');
+        }
+        console.log("Submission successful:", result);
+        alert("Concern submitted successfully!");
+        setFormData({
+            name: '',
+            mobileNumber: '',
+            concernTitle: '',
+            affectedGarden: '', // Reset to empty string
+            description: '',
+            acknowledgeSelection: false,
+            attachedFile: null,
+        });
+        if(fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    } catch (err: any) {
+        console.error("Submission Failed:", err);
+        alert(`Submission Failed: ${err.message}`);
     }
-
-  } catch (err: any) {
-    console.error("Submission Failed:", err);
-    alert(`Submission Failed: ${err.message}`); // Give user feedback on failure
-  } finally {
-    // You can add your setIsSubmitting(false) logic here if you add that state
-  }
-    
   };
+
   return (
     <section>
       <Banner />
@@ -153,8 +122,8 @@ export default function Form() {
               </div>
             </div>
             <form className="space-y-8" onSubmit={handleSubmit}>
-              <div className="space-y-6">
-                <div className="space-y-2">
+              {/* ... other form fields ... */}
+              <div className="space-y-2">
                   <label htmlFor="firstName" className="block text-sm font-medium text-[#445072]">
                     1. Name <span className="text-red-500">*</span>
                   </label>
@@ -182,7 +151,6 @@ export default function Form() {
                     required
                   />
                 </div>
-              </div>
               <div className="space-y-2">
                 <label htmlFor="mobileNumber" className="block text-sm font-medium text-[#445072]">
                   3. Mobile number <span className="text-red-500">*</span>
@@ -197,6 +165,8 @@ export default function Form() {
                   required
                 />
               </div>
+
+              {/* ========= START OF CHANGES FOR AFFECTED GARDEN ========= */}
               <div className="space-y-4">
                 <label className="block text-sm font-medium text-[#445072]">
                   5. Affected Garden <span className="text-red-500">*</span>
@@ -206,10 +176,11 @@ export default function Form() {
                     <div key={garden} className="flex items-center space-x-3">
                       <input
                         id={`garden-${garden}`}
-                        type="checkbox"
-                        checked={formData.affectedGarden.includes(garden)}
-                        onChange={() => handleCheckboxArrayChange("affectedGarden", garden)}
-                        className="form-checkbox h-4 w-4 rounded-sm appearance-none border border-gray-300 checked:bg-[#4A61C0] checked:border-transparent focus:outline-none"
+                        type="radio" // Changed from "checkbox"
+                        name="affectedGarden" // Add a name to group the radio buttons
+                        checked={formData.affectedGarden === garden} // Check if the state string matches this garden
+                        onChange={() => handleInputChange("affectedGarden", garden)} // Use the generic handler
+                        className="form-radio h-4 w-4 text-[#4A61C0] border-gray-300 focus:ring-[#4A61C0]"
                       />
                       <label htmlFor={`garden-${garden}`} className="text-sm text-[#445072]">
                         {garden}
@@ -218,38 +189,8 @@ export default function Form() {
                   ))}
                 </div>
               </div>
-              {/* <div className="space-y-2">
-                <label className="block text-sm font-medium text-[#445072]">
-                  6. Attach Photos (Optional)
-                </label>
-                <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors bg-gray-50">
-                  <MdOutlineFileUpload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600 mb-1">
-                    <GoPaperclip className="inline-block mr-1 text-base" />
-                    or drag and drop here
-                  </p>
-                  <p className="text-xs text-gray-500 mb-3">Maximum file size 5 MB</p>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    accept="image/*" 
-                  />
-                  <button
-                    type="button"
-                    onClick={handleChooseFileClick}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-[#445072] bg-white hover:bg-gray-50 focus:outline-none focus:ring-[#4A61C0] hover:cursor-pointer transition-shadow"
-                  >
-                    Choose file
-                  </button>
-                  {formData.attachedFile && (
-                    <p className="mt-2 text-sm text-gray-700">
-                      Selected file: {formData.attachedFile.name}
-                    </p>
-                  )}
-                </div>
-              </div> */}
+              {/* ========= END OF CHANGES FOR AFFECTED GARDEN ========= */}
+              
               <div className="space-y-2">
                 <label htmlFor="description" className="block text-sm font-medium text-[#445072]">
                   6. Description <span className="text-red-500">*</span>
@@ -263,6 +204,8 @@ export default function Form() {
                   required
                 ></textarea>
               </div>
+
+              {/* ... other form fields ... */}
               <div className="border-t pt-8 space-y-4">
                 <h3 className="text-lg font-medium text-[#445072]">Confirmation</h3>
                 <div className="space-y-4">
