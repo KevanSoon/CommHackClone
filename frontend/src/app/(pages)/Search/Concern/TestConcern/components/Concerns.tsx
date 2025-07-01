@@ -1,15 +1,17 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { ConcernItem } from '@/app/api/concerns/lib/data';
 
 interface RedditPostProps {
+  id: string;
   communityIcon: string;
   communityName: string;
   postTime: string;
   visitStatus?: string; 
   title: string;
   content: string;
-  upvotes: number;
-  comments: number;
+  upvotes: number | null;
+  comments: number | null;
   saved: boolean;
 }
 
@@ -159,37 +161,58 @@ function RedditPost({
   );
 }
 
-export default function App() {
-  const dummyPosts: RedditPostProps[] = [
-    {
-      communityIcon: 'https://placehold.co/20x20/000/fff?text=R',
-      communityName: 'r/Community Garden 1',
-      postTime: '15 hr. ago',
-      title: 'Our Tengah Garden Turning Into Mosquito Farm Already!',
-      content: `The water trays under the potted plants at Block 224's community garden never get cleared. Can see stagnant water every time I walk past. A lot of mosquitoes already – my kid kena bitten twice last week. 
-      Please lah, can someone maintain properly before dengue comes knocking?`,
-      upvotes: 2,
-      comments: 54,
-      saved: false,
-    },
-    {
-      communityIcon: 'https://placehold.co/20x20/000/fff?text=T',
-      communityName: 'r/Community Garden 1',
-      postTime: '2 hr. ago',
-      title: 'Community Garden or Personal Farm?',
-      content: `Noticed one resident at Garden Vista hogging three whole plots and even put up a "Do Not Touch" sign. Thought it’s supposed to be shared? Some of us also want to grow veggies but no space already. Can the RC or town council look into fair usage, please?
-`,
-      upvotes: 1200,
-      comments: 345,
-      saved: true,
-    },
 
-  ];
+function mapConcernToRedditPost(concern: ConcernItem): RedditPostProps {
+  return {
+    id: concern.id, // Map the unique ID for the key prop
+    communityIcon: `https://placehold.co/20x20/66BB6A/FFFFFF?text=G`, // Placeholder: Green icon with 'G' for Garden
+    communityName: concern.affectedGarden, // Direct mapping
+    postTime: 'Just now', // Placeholder: You could use a library like `date-fns` for real dates
+    visitStatus: concern.acknowledgeSelection ? "Acknowledged" : "Pending Review", // Conditional mapping
+    title: concern.concernTitle, // Direct mapping
+    content: concern.description, // Direct mapping
+    upvotes: 0, // Placeholder: Start with 0 upvotes
+    comments: 0, // Placeholder: Start with 0 comments
+    saved: false, // Default value
+  };
+}
+export default function App() {
+  const [redditPosts, setRedditPosts] = useState<RedditPostProps[]>([]);
+  useEffect(() => {
+    // Define an async function inside useEffect to fetch the data
+    const fetchConcerns = async () => {
+      try {
+        // Use the fetch API to make a GET request to your endpoint
+        const response = await fetch('/api/concerns');
+
+        if (!response.ok) {
+          // If the server responds with an error status (e.g., 404, 500)
+          throw new Error('Failed to fetch concerns');
+        }
+
+        // Parse the JSON data from the response
+        const concernData: ConcernItem[] = await response.json();
+        const mappedPosts = concernData.map(mapConcernToRedditPost);
+
+        // CHANGE: Update our state with the newly formatted array of posts.
+        setRedditPosts(mappedPosts);
+      
+        console.log(redditPosts)
+      } catch (err: any) {
+      } finally {
+      }
+    };
+
+    // Call the function to execute the fetch
+    fetchConcerns();
+  }, []); // The empty dependency array [] means this effect runs only once when the component mounts
+
+  // --- Render logic based on the state ---
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center py-8 font-inter px-16">
       <div className="w-full max-w-screen-lg lg:ml-0 lg:mr-auto">
-        {dummyPosts.map((post, index) => (
+        {redditPosts.map((post, index) => (
           <RedditPost key={index} {...post} />
         ))}
       </div>

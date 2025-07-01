@@ -5,29 +5,25 @@ import { GoPaperclip } from "react-icons/go";
 import Banner from './components/Banner';
 
 interface FormData {
-  firstName: string;
-  lastName: string;
+  name: string;
   mobileNumber: string;
-  graduationYear: string[]; 
-  university: string[]; 
-  whyInterested: string;
-  confirmAvailability: boolean;
+  concernTitle: string; 
+  affectedGarden: string[]; 
+  description: string;
   acknowledgeSelection: boolean;
   attachedFile: File | null; 
 }
 
-const gardens = ["Garden A", "Garden B", "Garden C", "Garden D"];
+const gardens = ["Plantation Grove", "Tengah Community Club", "Plantation Acres", "Garden Vale"];
 const priorities = ["Urgent", "Moderate", "Low"];
 
 export default function Form() {
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
+    name: '',
     mobileNumber: '',
-    graduationYear: [],
-    university: [],
-    whyInterested: '',
-    confirmAvailability: false,
+    concernTitle: '',
+    affectedGarden: [],
+    description: '',
     acknowledgeSelection: false,
     attachedFile: null, 
   });
@@ -49,7 +45,7 @@ export default function Form() {
     }));
   };
 
-  const handleCheckboxArrayChange = (field: 'graduationYear' | 'university', value: string) => {
+  const handleCheckboxArrayChange = (field: 'affectedGarden', value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: toggleArrayItem(prev[field], value),
@@ -73,11 +69,71 @@ export default function Form() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form data submitted:", formData);
-  };
+ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // 1. Prevent the default browser behavior of reloading the page
+    event.preventDefault();
+    // 2. Create a FormData object directly from the form event.
+    // This automatically collects all the input fields with a 'name' attribute.
+      const dataToSubmit = new FormData();
+      dataToSubmit.append('name', formData.name);
+      dataToSubmit.append('mobileNumber', formData.mobileNumber);
+      dataToSubmit.append('concernTitle', formData.concernTitle);
+      dataToSubmit.append('description', formData.description);
+      
+      // For the array of gardens, you must append each one individually.
+      // Your backend will then use .getAll('affectedGarden') to receive it as an array.
+      formData.affectedGarden.forEach(garden => {
+        dataToSubmit.append('affectedGarden', garden);
+      });
 
+      // For the file, append it if it exists
+      if (formData.attachedFile) {
+        // Your backend expects the file under the key 'photos'
+        dataToSubmit.append('photos', formData.attachedFile);
+      }
+
+       // Now, the rest of your logic can stay mostly the same, but using the new object
+  try {
+    const response = await fetch('/api/concerns', {
+      method: 'POST',
+      body: dataToSubmit, // Use the manually constructed FormData object
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      // The 400 Bad Request error is coming from here.
+      // Log the specific error message from the server for easier debugging.
+      console.error("Server Error:", result.message); 
+      throw new Error(result.message || 'Something went wrong');
+    }
+
+    console.log("Submission successful:", result);
+    alert("Concern submitted successfully!"); // Give user feedback
+    
+    // Resetting the form now requires resetting your state
+    setFormData({
+      name: '',
+      mobileNumber: '',
+      concernTitle: '',
+      affectedGarden: [],
+      description: '',
+      acknowledgeSelection: false,
+      attachedFile: null,
+    });
+    // And reset the file input visually
+    if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
+
+  } catch (err: any) {
+    console.error("Submission Failed:", err);
+    alert(`Submission Failed: ${err.message}`); // Give user feedback on failure
+  } finally {
+    // You can add your setIsSubmitting(false) logic here if you add that state
+  }
+    
+  };
   return (
     <section>
       <Banner />
@@ -100,28 +156,28 @@ export default function Form() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <label htmlFor="firstName" className="block text-sm font-medium text-[#445072]">
-                    1. Your Name <span className="text-red-500">*</span>
+                    1. Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="firstName"
                     type="text"
                     placeholder="e.g., John Teo"
-                    value={formData.firstName}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    value={formData.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
                     className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#4A61C0] focus:border-[#4A61C0] bg-white"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="lastName" className="block text-sm font-medium text-[#445072]">
-                    2. Post/Report Title <span className="text-red-500">*</span>
+                    2. Concern Title <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="lastName"
                     type="text"
                     placeholder="e.g., Unfairing Allotment of Community Garden"
-                    value={formData.lastName}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    value={formData.concernTitle}
+                    onChange={(e) => handleInputChange("concernTitle", e.target.value)}
                     className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#4A61C0] focus:border-[#4A61C0] bg-white"
                     required
                   />
@@ -143,27 +199,6 @@ export default function Form() {
               </div>
               <div className="space-y-4">
                 <label className="block text-sm font-medium text-[#445072]">
-                  4. Priority Level <span className="text-red-500">*</span>
-                </label>
-                <div className="space-y-3">
-                  {priorities.map(priority => (
-                    <div key={priority} className="flex items-center space-x-3">
-                      <input
-                        id={`priority-${priority}`}
-                        type="checkbox"
-                        checked={formData.graduationYear.includes(priority)}
-                        onChange={() => handleCheckboxArrayChange("graduationYear", priority)}
-                        className="form-checkbox h-4 w-4 rounded-sm appearance-none border border-gray-300 checked:bg-[#4A61C0] checked:border-transparent focus:outline-none"
-                      />
-                      <label htmlFor={`priority-${priority}`} className="text-sm text-[#445072]">
-                        {priority}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-[#445072]">
                   5. Affected Garden <span className="text-red-500">*</span>
                 </label>
                 <div className="space-y-3">
@@ -172,8 +207,8 @@ export default function Form() {
                       <input
                         id={`garden-${garden}`}
                         type="checkbox"
-                        checked={formData.university.includes(garden)}
-                        onChange={() => handleCheckboxArrayChange("university", garden)}
+                        checked={formData.affectedGarden.includes(garden)}
+                        onChange={() => handleCheckboxArrayChange("affectedGarden", garden)}
                         className="form-checkbox h-4 w-4 rounded-sm appearance-none border border-gray-300 checked:bg-[#4A61C0] checked:border-transparent focus:outline-none"
                       />
                       <label htmlFor={`garden-${garden}`} className="text-sm text-[#445072]">
@@ -183,7 +218,7 @@ export default function Form() {
                   ))}
                 </div>
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label className="block text-sm font-medium text-[#445072]">
                   6. Attach Photos (Optional)
                 </label>
@@ -214,15 +249,15 @@ export default function Form() {
                     </p>
                   )}
                 </div>
-              </div>
+              </div> */}
               <div className="space-y-2">
-                <label htmlFor="whyInterested" className="block text-sm font-medium text-[#445072]">
-                  7. Detailed Description <span className="text-red-500">*</span>
+                <label htmlFor="description" className="block text-sm font-medium text-[#445072]">
+                  6. Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
-                  id="whyInterested"
-                  value={formData.whyInterested}
-                  onChange={(e) => handleInputChange("whyInterested", e.target.value)}
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => handleInputChange("description", e.target.value)}
                   rows={5}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#4A61C0] focus:border-[#4A61C0] bg-white resize-none"
                   required
@@ -231,21 +266,6 @@ export default function Form() {
               <div className="border-t pt-8 space-y-4">
                 <h3 className="text-lg font-medium text-[#445072]">Confirmation</h3>
                 <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <input
-                      id="confirmAvailability"
-                      type="checkbox"
-                      checked={formData.confirmAvailability}
-                      onChange={(e) => handleInputChange("confirmAvailability", e.target.checked)}
-                      className="mt-1 w-4 h-4 rounded border border-gray-300
-                        checked:bg-[#4A61C0] checked:border-transparent
-                        focus:outline-none focus:ring-2 focus:ring-[#4A61C0]"
-                    />
-                    <label htmlFor="confirmAvailability" className="text-sm text-[#445072] leading-relaxed">
-                      I confirm my availability to attend this full-day event taking place on 15 Aug 2025 (9am to 6pm){" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                  </div>
                   <div className="flex items-start space-x-3">
                     <input
                       id="acknowledgeSelection"

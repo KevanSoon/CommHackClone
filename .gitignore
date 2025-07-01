@@ -7,7 +7,7 @@
 .nodemonignore
 npm-debug.log
 node_modules/
-# lib/
+lib/
 mockgoose/
 
 # MEAN.js app and assets
