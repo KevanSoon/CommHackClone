@@ -38,7 +38,7 @@ const ConcernsEducation = () => {
             </div>
             <h3 className="text-xl font-bold text-[#2C2E34] mb-4">View & Track Your Submission</h3>
             <p className="text-[#454953] mb-4">
-             📄 After submitting, your concern appears in your personal dashboard — along with a timestamp and summary. You can view all your past submissions in one place.
+             📄 After submitting, your concern appears in the community dashboard — along with a timestamp and summary. You can view all submissions, including yours, in one shared space.
             </p>
             <p>"Stay informed, stay organized." </p>
           </div>
