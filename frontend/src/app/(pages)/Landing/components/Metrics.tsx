@@ -4,19 +4,19 @@ import React from 'react';
 
 const stats = [
   {
-    value: '1,025,009',
+    value: '0',
     label: 'FORMS LAUNCHED',
   },
   {
-    value: '244,185,221',
+    value: '0',
     label: 'SUBMISSIONS RECEIVED',
   },
   {
-    value: '209,925',
+    value: '0',
     label: 'PUBLIC OFFICERS ONBOARD',
   },
   {
-    value: '164',
+    value: '0',
     label: 'GOVERNMENT AGENCIES',
   },
 ];

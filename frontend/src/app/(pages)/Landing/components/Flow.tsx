@@ -21,12 +21,12 @@ const ConcernsEducation = () => {
                 <BsFillQuestionSquareFill className="text-white text-xl" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-[#2C2E34] mb-4">Lorem ipsum dolor sit amet?</h3>
+            <h3 className="text-xl font-bold text-[#2C2E34] mb-4">Share Your Concern</h3>
             <p className="text-[#454953] mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+             📝 Fill out a simple form to submit your concern — whether it’s a maintenance issue, noise complaint, or suggestion. Add photos or location details to help clarify.
             </p>
             <p className="text-[#454953]">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              "No more lost messages — your voice starts here."
             </p>
           </div>
 
@@ -36,13 +36,11 @@ const ConcernsEducation = () => {
                 <IoIosChatboxes className="text-white text-2xl" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-[#2C2E34] mb-4">Lorem ipsum dolor sit amet?</h3>
+            <h3 className="text-xl font-bold text-[#2C2E34] mb-4">View & Track Your Submission</h3>
             <p className="text-[#454953] mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+             📄 After submitting, your concern appears in your personal dashboard — along with a timestamp and summary. You can view all your past submissions in one place.
             </p>
-            <a href="#" className="text-blue-500 hover:text-blue-600 font-medium inline-flex items-center gap-1 underline">
-              Lorem ipsum dolor sit amet <LuExternalLink />
-            </a>
+            <p>"Stay informed, stay organized." </p>
           </div>
 
           <div className="flex flex-col">
@@ -51,12 +49,10 @@ const ConcernsEducation = () => {
                 <FaSort className="text-white text-lg" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-[#2C2E34] mb-4">Lorem ipsum dolor sit amet?</h3>
-            <p className="text-[#454953] mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit:</p>
+            <h3 className="text-xl font-bold text-[#2C2E34] mb-4">Get Status Updates from Residential Network</h3>
+            <p className="text-[#454953] mb-4">✅ Your concern is routed to the relevant Residential Network (RN) or official contact. As actions are taken — acknowledged, under review, resolved — you’ll get updates with clear status changes.</p>
             <div className="space-y-3 text-[#454953]">
-              <p><span className="font-medium">1.</span> Lorem ipsum dolor sit amet.</p>
-              <p><span className="font-medium">2.</span> Lorem ipsum dolor sit amet.</p>
-              <p><span className="font-medium">3.</span> Lorem ipsum dolor sit amet.</p>
+              <p>"Know who’s handling it. See what’s happening. Be notified when it’s done."</p>
             </div>
           </div>
         </div>

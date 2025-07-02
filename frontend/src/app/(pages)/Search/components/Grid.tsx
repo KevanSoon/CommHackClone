@@ -16,9 +16,9 @@ const gridItems: GridItem[] = [
   {
     id: 1,
     image: '/garden/tengah/tengah.png',
-    name: 'Community Garden 1',
-    location: 'Blk 111A Plantation Acres',
-    description: 'Why is my garden so small?',
+    name: 'Plantation Grove Garden',
+    location: 'Blk 120B',
+    description: 'Share about your concerns here!',
     href: '/Search/Concern/TestConcern',
   },
 ];

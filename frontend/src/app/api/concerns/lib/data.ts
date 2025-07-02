@@ -8,6 +8,7 @@ export interface ConcernItem {
   description: string;
   acknowledgeSelection: boolean;
   attachedFile: File | null; // In mock data, this will typically be null
+  status: string;
 }
 
 // This array acts as our in-memory database for submitted concerns.
@@ -18,32 +19,35 @@ export const concernData: ConcernItem[] = [
     name: 'Tan Wei Ling',
     mobileNumber: '+65 9876 5432',
     concernTitle: 'Automated Sprinkler System Malfunction',
-    affectedGarden: 'Plantation Farmway Community Garden (Plot 7)',
+    affectedGarden: 'Plantation Grove',
     description: 'The "smart" sprinkler for Plot 7 did not activate this morning at 7 AM. My kangkong and chai sim are wilting from the heat. The other plots seem fine. Could be a faulty valve or sensor?',
     acknowledgeSelection: true,
     // Note: It's not practical to create a static File object here.
     // In a real app, this would be an uploaded file object. For mock data, null is appropriate.
     attachedFile: null, 
+    status: 'resolved'
   },
   {
     id: 'tengah-concern-002',
     name: 'Siti binti Ahmad',
     mobileNumber: '+65 8123 4567',
     concernTitle: 'Severe Mealybug Infestation',
-    affectedGarden: 'Garden Vale Rooftop Edibles',
+    affectedGarden: 'Plantation Grove',
     description: 'The row of brinjal (eggplant) plants is covered in white, fuzzy mealybugs. The leaves are turning yellow and sticky. We need organic pest control before it spreads to the other vegetable beds.',
     acknowledgeSelection: true,
     attachedFile: null,
+    status: 'in-progress'
   },
   {
     id: 'tengah-concern-003',
     name: 'Suresh Kumar',
     mobileNumber: '+65 9234 5678',
     concernTitle: 'Waterlogging and Poor Drainage in Plot C-4',
-    affectedGarden: 'Parc Flora Allotment Garden',
+    affectedGarden: 'Plantation Grove',
     description: 'After the heavy rain last night, my plot (C-4) is completely flooded. The drain at the end of the row seems clogged with soil and leaves. My sweet potato roots might rot if this is not fixed soon.',
     acknowledgeSelection: true,
     attachedFile: null,
+    status: 'looked-on'
   },
   // {
   //   id: 'tengah-concern-004',

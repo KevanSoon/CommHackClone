@@ -43,6 +43,7 @@ export async function POST(request: Request) {
             description: description,
             acknowledgeSelection: true,
             attachedFile: null,
+            status: ""
         };
 
         // Add the new item to our in-memory data
