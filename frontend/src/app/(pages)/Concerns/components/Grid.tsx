@@ -15,11 +15,11 @@ interface GridItem {
 const gridItems: GridItem[] = [
   {
     id: 1,
-    image: '/garden/tengah/tengah.png',
-    name: 'Plantation Grove Garden',
-    location: 'Blk 120B',
-    description: 'Share about your concerns here!',
-    href: '/Search/Concern/TestConcern',
+    image: '/placeholder.png',
+    name: 'Allotment Concerns',
+    location: 'Tengah',
+    description: 'Citizens feel that the current allotment system implemented is unfair.',
+    href: 'Concerns/Allotment',
   },
 ];
 

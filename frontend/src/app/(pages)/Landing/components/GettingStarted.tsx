@@ -5,9 +5,9 @@ const GettingStarted = () => {
   return (
     <div className="w-full bg-[#293044] py-24 flex flex-col items-center justify-center text-center">
       <div className="mb-8">
-        <div className="w-16 h-16 relative mx-auto">
+        <div className="w-24 h-24 relative mx-auto">
           <Image
-            src="/images/getting-started-icon.svg" 
+            src="/Logo.svg" 
             alt="Logo"
             fill
             style={{ objectFit: "contain" }}
@@ -17,7 +17,7 @@ const GettingStarted = () => {
       </div>
 
       <h2 className="text-white text-4xl font-bold mb-8">
-        Start sending your concerns now.
+        Start sending your garden concerns now.
       </h2>
 
       <Link href="/start" target="_blank" rel="noopener noreferrer">

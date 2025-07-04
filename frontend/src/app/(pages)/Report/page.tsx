@@ -4,33 +4,41 @@ import { MdOutlineFileUpload } from "react-icons/md";
 import { GoPaperclip } from "react-icons/go";
 import Banner from './components/Banner';
 
-// Change 1: Update the interface. affectedGarden is now a single string.
 interface FormData {
   name: string;
   mobileNumber: string;
-  concernTitle: string; 
-  affectedGarden: string; // Was string[]
+  concernTitle: string;
+  affectedGarden: string[];
   description: string;
-  acknowledgeSelection: boolean;
-  attachedFile: File | null; 
+  confirmFollowUp: boolean;
+  acknowledgeResponsePolicy: boolean;
+  attachedFile: File | null;
 }
 
-const gardens = ["Plantation Grove", "Tengah Community Club", "Plantation Acres", "Garden Vale"];
+const gardens = ["Tengah", "Jurong East", "Bukit Batok", "Toa Payoh"];
 
 export default function Form() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     mobileNumber: '',
     concernTitle: '',
-    affectedGarden: '', // Change 2: Initial state is now an empty string.
+    affectedGarden: [],
     description: '',
-    acknowledgeSelection: false,
-    attachedFile: null, 
+    confirmFollowUp: false,
+    acknowledgeResponsePolicy: false,
+    attachedFile: null,
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // This function can now handle the 'affectedGarden' field as well.
+  const toggleArrayItem = (arr: string[], item: string): string[] => {
+    if (arr.includes(item)) {
+      return arr.filter(i => i !== item);
+    } else {
+      return [...arr, item];
+    }
+  };
+
   const handleInputChange = <Field extends keyof FormData>(field: Field, value: FormData[Field]) => {
     setFormData(prev => ({
       ...prev,
@@ -38,26 +46,31 @@ export default function Form() {
     }));
   };
 
-  // Change 3: The `toggleArrayItem` and `handleCheckboxArrayChange` functions are no longer needed and have been removed.
+  const handleCheckboxArrayChange = (field: 'affectedGarden', value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: toggleArrayItem(prev[field], value),
+    }));
+  };
 
   const handleChooseFileClick = () => {
-    fileInputRef.current?.click(); 
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
-      if (selectedFile.size > 5 * 1024 * 1024) { 
-        alert("File size exceeds the maximum limit of 5 MB."); 
-        setFormData(prev => ({ ...prev, attachedFile: null })); 
-        e.target.value = ''; 
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        alert("File size exceeds the maximum limit of 5 MB.");
+        setFormData(prev => ({ ...prev, attachedFile: null }));
+        e.target.value = '';
       } else {
         setFormData(prev => ({ ...prev, attachedFile: selectedFile }));
       }
     }
   };
 
- const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
       const dataToSubmit = new FormData();
       dataToSubmit.append('name', formData.name);
@@ -66,7 +79,12 @@ export default function Form() {
       dataToSubmit.append('description', formData.description);
       
       // Since it's a single string now, you just append it directly.
-      dataToSubmit.append('affectedGarden', formData.affectedGarden);
+      // dataToSubmit.append('affectedGarden', formData.affectedGarden);
+      
+      //not too sure affected garden should be multiple values
+      formData.affectedGarden.forEach(garden => {
+        dataToSubmit.append('affectedGarden', garden);
+      });
 
       if (formData.attachedFile) {
         dataToSubmit.append('photos', formData.attachedFile);
@@ -74,7 +92,7 @@ export default function Form() {
     
     // The rest of your submit logic remains the same
     try {
-        const response = await fetch('/api/concerns', {
+        const response = await fetch('/backend/concerns', {
             method: 'POST',
             body: dataToSubmit,
         });
@@ -89,9 +107,10 @@ export default function Form() {
             name: '',
             mobileNumber: '',
             concernTitle: '',
-            affectedGarden: '', // Reset to empty string
+            affectedGarden: [], // Reset to empty string
             description: '',
-            acknowledgeSelection: false,
+            confirmFollowUp: false,
+            acknowledgeResponsePolicy: false,
             attachedFile: null,
         });
         if(fileInputRef.current) {
@@ -110,50 +129,36 @@ export default function Form() {
         <div className="bg-white rounded-md shadow-md">
           <div className="p-8">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4 text-[#293044]">
-                Instructions
-              </h2>
+              <h2 className="text-2xl font-bold mb-4 text-[#293044]">Instructions</h2>
               <div className="text-[#445072] space-y-4">
                 <p>
-                  We welcome all users to share their thoughts with us, whether it's feedback, a discussion topic,
-                  or a complaint, through our submission form. Your input helps us improve and build a better community together.
-                  To submit, simply complete all required fields in the form. Submissions are reviewed regularly, and we may follow up with you if needed.
+                  We encourage all community gardeners to share their concerns through our submission form. Your input helps us nurture a thriving and harmonious garden space for everyone. Simply fill out all required fields to submit your concern. Submissions are reviewed regularly, and we may reach out to you for further details if needed.
                 </p>
               </div>
             </div>
+
             <form className="space-y-8" onSubmit={handleSubmit}>
-              {/* ... other form fields ... */}
+
+              {/* Name */}
               <div className="space-y-2">
-                  <label htmlFor="firstName" className="block text-sm font-medium text-[#445072]">
-                    1. Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="firstName"
-                    type="text"
-                    placeholder="e.g., John Teo"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#4A61C0] focus:border-[#4A61C0] bg-white"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="lastName" className="block text-sm font-medium text-[#445072]">
-                    2. Concern Title <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="lastName"
-                    type="text"
-                    placeholder="e.g., Unfairing Allotment of Community Garden"
-                    value={formData.concernTitle}
-                    onChange={(e) => handleInputChange("concernTitle", e.target.value)}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#4A61C0] focus:border-[#4A61C0] bg-white"
-                    required
-                  />
-                </div>
+                <label htmlFor="name" className="block text-sm font-medium text-[#445072]">
+                  1. Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="e.g., John Teo"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#4A61C0] focus:border-[#4A61C0] bg-white"
+                  required
+                />
+              </div>
+
+              {/* Mobile No. */}
               <div className="space-y-2">
                 <label htmlFor="mobileNumber" className="block text-sm font-medium text-[#445072]">
-                  3. Mobile number <span className="text-red-500">*</span>
+                  2. Mobile No. <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="mobileNumber"
@@ -166,21 +171,36 @@ export default function Form() {
                 />
               </div>
 
-              {/* ========= START OF CHANGES FOR AFFECTED GARDEN ========= */}
+              {/* Concern Title */}
+              <div className="space-y-2">
+                <label htmlFor="concernTitle" className="block text-sm font-medium text-[#445072]">
+                  3. Concern Title <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="concernTitle"
+                  type="text"
+                  placeholder="e.g., unfair allotment"
+                  value={formData.concernTitle}
+                  onChange={(e) => handleInputChange("concernTitle", e.target.value)}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#4A61C0] focus:border-[#4A61C0] bg-white"
+                  required
+                />
+              </div>
+
+              {/* Affected Garden */}
               <div className="space-y-4">
                 <label className="block text-sm font-medium text-[#445072]">
-                  5. Affected Garden <span className="text-red-500">*</span>
+                  4. Affected Garden <span className="text-red-500">*</span>
                 </label>
                 <div className="space-y-3">
                   {gardens.map(garden => (
                     <div key={garden} className="flex items-center space-x-3">
                       <input
                         id={`garden-${garden}`}
-                        type="radio" // Changed from "checkbox"
-                        name="affectedGarden" // Add a name to group the radio buttons
-                        checked={formData.affectedGarden === garden} // Check if the state string matches this garden
-                        onChange={() => handleInputChange("affectedGarden", garden)} // Use the generic handler
-                        className="form-radio h-4 w-4 text-[#4A61C0] border-gray-300 focus:ring-[#4A61C0]"
+                        type="checkbox"
+                        checked={formData.affectedGarden.includes(garden)}
+                        onChange={() => handleCheckboxArrayChange("affectedGarden", garden)}
+                        className="form-checkbox h-4 w-4 rounded-sm appearance-none border border-gray-300 checked:bg-[#4A61C0] checked:border-transparent focus:outline-none"
                       />
                       <label htmlFor={`garden-${garden}`} className="text-sm text-[#445072]">
                         {garden}
@@ -189,8 +209,42 @@ export default function Form() {
                   ))}
                 </div>
               </div>
-              {/* ========= END OF CHANGES FOR AFFECTED GARDEN ========= */}
-              
+
+              {/* Attached Photos */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-[#445072]">
+                  5. Attached Photos (Optional)
+                </label>
+                <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors bg-gray-50">
+                  <MdOutlineFileUpload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600 mb-1">
+                    <GoPaperclip className="inline-block mr-1 text-base" />
+                    or drag and drop here
+                  </p>
+                  <p className="text-xs text-gray-500 mb-3">Maximum file size 5 MB</p>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleChooseFileClick}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-[#445072] bg-white hover:bg-gray-50 focus:outline-none focus:ring-[#4A61C0] hover:cursor-pointer transition-shadow"
+                  >
+                    Choose file
+                  </button>
+                  {formData.attachedFile && (
+                    <p className="mt-2 text-sm text-gray-700">
+                      Selected file: {formData.attachedFile.name}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Description */}
               <div className="space-y-2">
                 <label htmlFor="description" className="block text-sm font-medium text-[#445072]">
                   6. Description <span className="text-red-500">*</span>
@@ -205,28 +259,42 @@ export default function Form() {
                 ></textarea>
               </div>
 
-              {/* ... other form fields ... */}
+              {/* Confirmation Checkboxes */}
               <div className="border-t pt-8 space-y-4">
                 <h3 className="text-lg font-medium text-[#445072]">Confirmation</h3>
                 <div className="space-y-4">
                   <div className="flex items-start space-x-3">
                     <input
-                      id="acknowledgeSelection"
+                      id="confirmFollowUp"
                       type="checkbox"
-                      checked={formData.acknowledgeSelection}
-                      onChange={(e) => handleInputChange("acknowledgeSelection", e.target.checked)}
-                      className="mt-1 w-4 h-4 rounded border border-gray-300
-                        checked:bg-[#4A61C0] checked:border-transparent
-                        focus:outline-none focus:ring-2 focus:ring-[#4A61C0]"
+                      checked={formData.confirmFollowUp}
+                      onChange={(e) => handleInputChange("confirmFollowUp", e.target.checked)}
+                      className="mt-1 w-4 h-4 form-checkbox h-4 w-4 rounded-sm appearance-none border border-gray-300 checked:bg-[#4A61C0] checked:border-transparent focus:outline-none"
+                      required
                     />
-                    <label htmlFor="acknowledgeSelection" className="text-sm text-[#445072] leading-relaxed">
-                      I acknowledge that my submission may be reviewed and followed up on if necessary,
-                      and that not all submissions will receive a response.{" "}
+                    <label htmlFor="confirmFollowUp" className="text-sm text-[#445072] leading-relaxed">
+                      I acknowledge that my submission may be reviewed and followed up on if necessary.
+                      <span className="text-red-500">*</span>
+                    </label>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <input
+                      id="acknowledgeResponsePolicy"
+                      type="checkbox"
+                      checked={formData.acknowledgeResponsePolicy}
+                      onChange={(e) => handleInputChange("acknowledgeResponsePolicy", e.target.checked)}
+                      className="mt-1 w-4 h-4 form-checkbox h-4 w-4 rounded-sm appearance-none border border-gray-300 checked:bg-[#4A61C0] checked:border-transparent focus:outline-none"
+                      required
+                    />
+                    <label htmlFor="acknowledgeResponsePolicy" className="text-sm text-[#445072] leading-relaxed">
+                      I understand that not all submissions will receive a response.
                       <span className="text-red-500">*</span>
                     </label>
                   </div>
                 </div>
               </div>
+
+              {/* Submit Button */}
               <div className="pt-6">
                 <button
                   type="submit"
@@ -235,14 +303,8 @@ export default function Form() {
                   Submit now
                 </button>
               </div>
+
             </form>
-            <div className="fixed bottom-6 right-6">
-              <button
-                type="button"
-                className="rounded-full w-10 h-10 bg-white border border-gray-300 flex items-center justify-center"
-              >
-              </button>
-            </div>
           </div>
         </div>
       </div>
