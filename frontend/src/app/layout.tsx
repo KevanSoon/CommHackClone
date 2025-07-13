@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./styles/globals.css";
-import "./components/Navbar/Navbar"
 import Navbar from "./components/Navbar/Navbar";
-import Footer from "./components/Footer/Footer"
+import FormShortCut from "./components/Form/FormShortCut";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "hearUs",
+  title: "Churp",
   description: "A Source of Truth at a Glance.",
 };
 
@@ -32,7 +31,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
-        <Footer />
+        <FormShortCut />
       </body>
     </html>
   );

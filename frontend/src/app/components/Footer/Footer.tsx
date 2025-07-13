@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className="bg-white py-8 px-4">
-      <div className="w-full max-w-screen-2xl mx-auto px-16">
+    <footer className="bg-white py-8">
+      <div className="w-full max-w-screen-2xl mx-auto px-6 sm:px-8 lg:px-16">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pb-6 space-y-4 sm:space-y-0">
           <Link
             href="https://www.example.com/telescope"
@@ -14,7 +14,7 @@ const Footer = () => {
             rel="noopener noreferrer"
           >
             <h2 className="text-[#454953] text-lg font-semibold cursor-pointer hover:underline mb-2">
-              HearUs
+              Churp
             </h2>
           </Link>
 
@@ -54,7 +54,7 @@ const Footer = () => {
             />
           </div>
           <p className="text-[#BEBEBE] text-xs">
-            &copy; 2025 HearUs
+            &copy; 2025 Churp
           </p>
         </div>
       </div>

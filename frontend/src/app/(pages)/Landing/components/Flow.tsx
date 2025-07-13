@@ -6,7 +6,7 @@ import { MdSpaceDashboard, MdUpdate } from "react-icons/md";
 const ConcernsEducation = () => {
   return (
     <section>
-      <div className="max-w-screen-2xl mx-auto w-full px-16 py-24">
+      <div className="max-w-screen-2xl mx-auto w-full px-6 sm:px-8 lg:px-16 py-24">
         <div className="mb-12">
           <p className="text-[#454953] mb-2">Not sure of the flow?</p>
           <h2 className="text-4xl font-bold text-[#2C2E34]">Here are the key steps</h2>
@@ -22,7 +22,7 @@ const ConcernsEducation = () => {
             </div>
             <h3 className="text-xl font-bold text-[#2C2E34] mb-4">Share Your Concerns</h3>
             <p className="text-[#454953] mb-4">
-              Submit updates, concerns, or ideas about your garden via a simple form in the “Reports” section. Your input helps improve the neighbourhood.
+              Submit updates, concerns, or ideas about your garden via a simple form in the “Report a Concern” section. Your input helps improve the neighbourhood.
             </p>
           </div>
 

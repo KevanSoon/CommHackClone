@@ -40,7 +40,7 @@ const HelpCenter = () => {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-16 py-24">
+    <div className="max-w-screen-2xl mx-auto px-6 sm:px-8 lg:px-16 py-24">
       <div className="flex flex-col lg:flex-row items-center justify-between">
         <div className="lg:w-1/2 lg:pr-12 mb-10 lg:mb-0">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-6 leading-tight">
@@ -90,7 +90,7 @@ const HelpCenter = () => {
                         {faq.answer}
                       </p>
                       <Link
-                        href="#"
+                        href="/"
                         className="text-[#4A61C0] text-sm inline-flex items-center gap-2 font-medium hover:underline transition-colors duration-200"
                       >
                         Read more <FaExternalLinkAlt className="text-xs" />
@@ -103,7 +103,7 @@ const HelpCenter = () => {
           </div>
 
           <Link
-            href="https://yourhelpcenter.url"
+            href="/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#4A61C0] font-medium hover:underline flex items-center mt-6 transition-colors duration-200"

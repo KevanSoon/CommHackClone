@@ -1,45 +1,37 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { HiMiniMagnifyingGlass } from 'react-icons/hi2';
 
 const Navbar = () => {
-  const [currentPath, setCurrentPath] = useState('/Discover');
+  const pathname = usePathname(); // Automatically updates with URL
   const [menuOpen, setMenuOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setCurrentPath('/Discover');
-  }, []);
-
   const navItems = [
-    { name: 'Concerns', href: '/Concerns' },
-    { name: 'Report', href: '/Report' },
+    { name: 'Community Dashboard', href: '/CommunityDashboard' },
+    { name: 'Report a Concern', href: '/Report' },
   ];
 
   return (
     <nav className="bg-white w-full relative z-40">
-      <div className="w-full max-w-screen-2xl mx-auto py-3 flex items-center px-16">
+      <div className="hidden sm:flex w-full max-w-screen-2xl mx-auto py-3 items-center px-16">
         <div className="flex items-center space-x-8 flex-grow">
-          <a
-            href="/"
-            className="flex-shrink-0"
-            onClick={() => setCurrentPath('/')}
-          >
-            <img src="/HearUs.svg" alt="HearUs Logo" width={128} height={128} />
+          <a href="/" className="flex-shrink-0">
+            <img src="/churp_w_text.svg" alt="HearUs Logo" width={96} height={96} />
           </a>
 
           <div className="hidden sm:flex sm:space-x-6">
             {navItems.map((item) => {
-              const isActive = currentPath === item.href;
+              const isActive = pathname === item.href;
 
               return (
                 <a
                   key={item.name}
                   href={item.href}
                   className="relative group px-2 py-1 rounded-md flex-shrink-0"
-                  onClick={() => setCurrentPath(item.href)}
                 >
                   <span
                     className={`text-base font-medium transition-colors duration-200 ${
@@ -78,29 +70,30 @@ const Navbar = () => {
               }}
             />
           </div>
-
-          <button
-            className="sm:hidden text-3xl text-[#2a56c5] ml-4"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <Menu className="w-7 h-7" />
-          </button>
         </div>
       </div>
 
+      <div className="sm:hidden w-full py-3 px-4 flex items-center justify-between">
+        <a href="/">
+          <img src="/churp_w_text.svg" alt="HearUs Logo" width={96} height={96} />
+        </a>
+        <button
+          className="text-3xl text-[#2a56c5]"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <Menu className="w-7 h-7" />
+        </button>
+      </div>
       {menuOpen && (
-        <div className="sm:hidden px-4 pt-2 pb-4 space-y-2">
+        <div className="sm:hidden pt-2 pb-4 space-y-2 max-w-full">
           {navItems.map((item) => {
-            const isActive = currentPath === item.href;
+            const isActive = pathname === item.href;
             return (
               <a
                 key={item.name}
                 href={item.href}
                 className="block relative group px-4 py-2 rounded-md"
-                onClick={() => {
-                  setMenuOpen(false);
-                  setCurrentPath(item.href);
-                }}
+                onClick={() => setMenuOpen(false)}
               >
                 <span
                   className={`text-base font-medium transition-colors duration-200 ${
